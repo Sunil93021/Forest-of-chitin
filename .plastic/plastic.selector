@@ -1,4 +1,0 @@
-repository "Forest Of Chitin/Forest Of Chitin@13469222612667@cloud"
-  path "/"
-    br "/main"
-    co "/main"
