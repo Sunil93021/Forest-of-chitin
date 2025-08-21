@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &432255527253506319
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5581920731207237797}
+  m_Layer: 0
+  m_Name: AttackPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5581920731207237797
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 432255527253506319}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.0219, y: -0.064, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 320392134641049625}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7434009757675505747
 GameObject:
   m_ObjectHideFlags: 0
@@ -25,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 7434009757675505747}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.16228, z: 0}
+  m_LocalPosition: {x: 0, y: -0.1571, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -40,12 +71,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 320392134641049625}
-  - component: {fileID: 1012309473265592899}
-  - component: {fileID: 3040381628881550476}
   - component: {fileID: 8568821047553895931}
   - component: {fileID: 9049862679861046986}
+  - component: {fileID: 1012309473265592899}
+  - component: {fileID: 3040381628881550476}
   - component: {fileID: 1868132727966285538}
-  m_Layer: 0
+  - component: {fileID: 7818362997002330574}
+  - component: {fileID: 7759331303480375767}
+  m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -67,40 +100,9 @@ Transform:
   m_Children:
   - {fileID: 4703785517387626451}
   - {fileID: 3722073263232801161}
+  - {fileID: 5581920731207237797}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1012309473265592899
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8445015354246516029}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31a1aa9f308eb514eb7951bb7bc9ada5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &3040381628881550476
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8445015354246516029}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9786af607f796c046bb8d4588fe9be88, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 80
-  jumpForce: 4.5
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  groundRadius: 0.001
-  playerFeet: {fileID: 3722073263232801161}
-  childTransform: {fileID: 4703785517387626451}
 --- !u!50 &8568821047553895931
 Rigidbody2D:
   serializedVersion: 5
@@ -162,9 +164,41 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -0.014925718}
-  m_Size: {x: 0.15, y: 0.2897514}
+  m_Offset: {x: 0, y: -0.0040721}
+  m_Size: {x: 0.15, y: 0.2813807}
   m_Direction: 0
+--- !u!114 &1012309473265592899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8445015354246516029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a1aa9f308eb514eb7951bb7bc9ada5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3040381628881550476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8445015354246516029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9786af607f796c046bb8d4588fe9be88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 1
+  jumpForce: 4.5
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  groundRadius: 0.001
+  playerFeet: {fileID: 3722073263232801161}
+  childTransform: {fileID: 4703785517387626451}
 --- !u!114 &1868132727966285538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,6 +209,38 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 06ed77031aabeab46b0d6c56f4082738, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7818362997002330574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8445015354246516029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e885ca5ca83ecb41a201879ed720850, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackPoint: {fileID: 5581920731207237797}
+  attackRange: 0.5
+  damage: 30
+  attackCooldown: 1
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  visualPlayer: {fileID: 4703785517387626451}
+--- !u!114 &7759331303480375767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8445015354246516029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 097e402da631739458d90e221b47d80d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &3035755601560843621
@@ -190,8 +256,16 @@ PrefabInstance:
       value: Player1
       objectReference: {fileID: 0}
     - target: {fileID: 7738907795435258549, guid: 27f35b2945ed4bf4aa5eebac283c3137, type: 3}
+      propertyPath: m_SortingLayer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7738907795435258549, guid: 27f35b2945ed4bf4aa5eebac283c3137, type: 3}
       propertyPath: m_SortingOrder
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7738907795435258549, guid: 27f35b2945ed4bf4aa5eebac283c3137, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -393208899
       objectReference: {fileID: 0}
     - target: {fileID: 7738907795435258550, guid: 27f35b2945ed4bf4aa5eebac283c3137, type: 3}
       propertyPath: m_LocalPosition.x
@@ -263,4 +337,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23ca26bdb8ac1a64abaa86975e0820c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parentTransform: {fileID: 320392134641049625}
+  playerRoot: {fileID: 320392134641049625}
