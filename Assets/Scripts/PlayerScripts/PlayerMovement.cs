@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerInputReader))]
@@ -8,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private StateMachine stateMachine;
     private SpriteRenderer childSpriteRenderer;
+    private AnimatorController animator;
 
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 5f;
@@ -17,12 +19,15 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float groundRadius = 0.2f;
     [SerializeField] private Transform playerFeet;
+    [SerializeField] private float jumpDelay = 0.3f;
 
     [Header("Visual")]
     [SerializeField] private Transform childTransform;
 
-    private bool isGrounded;
+
+    private bool CanJump;
     public bool IsFacingRight { get; private set; } = true;
+    private Coroutine DealJump = null;
 
     private void Awake()
     {
@@ -30,15 +35,19 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         stateMachine = GetComponent<StateMachine>();
         childSpriteRenderer = childTransform.GetComponent<SpriteRenderer>();
+        animator = childTransform.GetComponent<AnimatorController>();
     }
 
     private void Update()
     {
         // jump (one-shot)
-        if (input.JumpPressed && isGrounded)
+        
+        if (input.JumpPressed && CanJump)
         {
+            Debug.Log("Jumped");
             rb.linearVelocityY = jumpForce;
-            stateMachine.ChangeState(StateMachine.PlayerState.Jumping);
+            CanJump = false;
+
         }
 
         // attack handled in PlayerCombat
@@ -52,16 +61,44 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleMovement()
     {
-        Vector2 move = new Vector2(input.MoveInput.x * moveSpeed, rb.linearVelocityY);
-        rb.linearVelocity = move;
+        float moveX = input.MoveInput.x * moveSpeed;
+        rb.linearVelocityX = moveX;
 
-        HandleFacing(move.x);
-        UpdateMoveState();
+        if (moveX !=0 )
+        {
+            animator.PlayRun();
+        }
+        else
+        {
+            animator.PlayIdle();
+        }
+
+            HandleFacing(moveX);
     }
 
     private void CheckGrounded()
     {
-        isGrounded = Physics2D.OverlapCircle(playerFeet.position, groundRadius, groundLayer);
+        bool onGround = Physics2D.OverlapCircle(playerFeet.position, groundRadius, groundLayer);
+        if(onGround)
+        {
+            if(rb.linearVelocityY < 0.1f)
+                CanJump = true;
+            if(DealJump != null)
+            {
+                StopCoroutine(DealJump);
+                DealJump = null;
+            }
+            
+        }
+        else
+        {
+            DealJump = StartCoroutine(JumpDelay());
+        }
+    }
+    IEnumerator JumpDelay()
+    {
+        yield return new WaitForSecondsRealtime(jumpDelay);
+        CanJump = false;
     }
 
     private void HandleFacing(float moveX)
@@ -85,14 +122,7 @@ public class PlayerMovement : MonoBehaviour
         //childSpriteRenderer.flipX = !childSpriteRenderer.flipX;
     }
 
-    private void UpdateMoveState()
-    {
-        if (input.MoveInput != Vector2.zero && stateMachine.GetCurrentPlayerState() == StateMachine.PlayerState.Idle)
-            stateMachine.ChangeState(StateMachine.PlayerState.Running);
-
-        else if (input.MoveInput == Vector2.zero && stateMachine.GetCurrentPlayerState() == StateMachine.PlayerState.Running)
-            stateMachine.ChangeState(StateMachine.PlayerState.Idle);
-    }
+   
 
     private void OnDrawGizmosSelected()
     {

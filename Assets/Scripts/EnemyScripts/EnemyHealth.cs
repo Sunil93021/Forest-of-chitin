@@ -8,7 +8,7 @@ public class EnemyHealth : MonoBehaviour
     private int currentHealth;
     private Animator animator;
     private Rigidbody2D rb;
-    private Collider2D col;
+    private BoxCollider2D col;
     private GroundPatrolEnemy groundPatrolEnemy;
 
     private void Awake()
@@ -16,7 +16,7 @@ public class EnemyHealth : MonoBehaviour
         currentHealth = maxHealth;
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        col = GetComponent<Collider2D>();
+        col = GetComponent<BoxCollider2D>();
         groundPatrolEnemy = GetComponent<GroundPatrolEnemy>();
     }
 
@@ -37,8 +37,10 @@ public class EnemyHealth : MonoBehaviour
     {
         animator.SetBool("IsDead", true);
 
-        if (col != null) col.isTrigger = true;
         if (rb != null) rb.gravityScale = 0;
+        if (col != null) col.enabled = false;
+        if(groundPatrolEnemy != null ) groundPatrolEnemy.enabled = false;
+        transform.GetComponent<EnemyHealth>().enabled = false;
         rb.linearVelocityX = 0;
 
 

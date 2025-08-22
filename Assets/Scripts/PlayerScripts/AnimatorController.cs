@@ -15,35 +15,34 @@ public class AnimatorController : MonoBehaviour
 
     private void OnEnable()
     {
-        if (stateMachine != null)
-            stateMachine.OnPlayerStateChanged += HandleStateChanged;
+        
     }
 
     private void OnDisable()
     {
-        if (stateMachine != null)
-            stateMachine.OnPlayerStateChanged -= HandleStateChanged;
+        
     }
 
-    private void HandleStateChanged(StateMachine.PlayerState state)
-    {
-        switch (state)
-        {
-            case StateMachine.PlayerState.Idle:
-                animator.SetBool("Running", false);
-                break;
-
-            case StateMachine.PlayerState.Running:
-                animator.SetBool("Running", true);
-                break;
-
-            case StateMachine.PlayerState.Attack:
-                
-                break;
-        }
-    }
-
+    
     public void PlayAttackAnimation (){
         animator.SetTrigger("Attack");
+    }
+    public void PlayRun()
+    {
+        animator.SetBool("Running", true);
+
+    }
+    public void PlayIdle()
+    {
+        animator.SetBool("Running", false);
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        collision.transform.TryGetComponent<EnemyHealth>(out EnemyHealth enemy);
+        if (enemy != null)
+        {
+            enemy.TakeDamage(30);
+        }
     }
 }

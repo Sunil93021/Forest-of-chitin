@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -11,6 +11,7 @@ public class GroundPatrolEnemy : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float checkDistance = 0.1f;
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask enemyLayer;
 
     [Header("Player info")]
     [SerializeField] private LayerMask playerLayer;
@@ -24,11 +25,8 @@ public class GroundPatrolEnemy : MonoBehaviour
     [SerializeField] private int damage = 20;
     [SerializeField, Min(ATTACK_ANIMATION_LENGTH)] private float attackDelay = 0.9f;
     private float attackTimer = 0f;
-    
 
-    [Header("Slow Effect (Time) ")]
-    [SerializeField] private float effectTimer = 1f;
-    [SerializeField] private float timeScale = 0.6f;
+
 
 
     private Rigidbody2D rb;
@@ -68,13 +66,18 @@ public class GroundPatrolEnemy : MonoBehaviour
         }
 
     }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Flip();
+    }
 
     // check player while patrolling
     private void HandlePatrolling()
     {
         rb.linearVelocityX = (movingRight ? 1 : -1) * moveSpeed;
         CheckGroundEnd();
-
+        animator.SetBool("Running", false);
+        animator.SetBool("Walking", true);
         RaycastHit2D playerHit = Physics2D.Raycast(
             transform.position, transform.right, visionRange, playerLayer
             );
@@ -90,27 +93,9 @@ public class GroundPatrolEnemy : MonoBehaviour
     {
         rb.linearVelocityX = (movingRight ? 1 : -1) * runSpeed;
         CheckGroundEnd();
-
-        RaycastHit2D playerHit = Physics2D.Raycast(
-            transform.position, transform.right, visionRange, playerLayer
-            );
-
-        if(playerHit == false || playerHit.distance > visionRange)
-        {
-            currentState = State.Patrolling; 
-        }
-
-        if(playerHit.distance < attackRange)
-        {
-            currentState = State.Attack;
-        }
-
         
-    }
-
-    //attack player if in attack range
-    private void HandleAttack()
-    {
+        animator.SetBool("Running", true);
+        animator.SetBool("Walking", false);
         RaycastHit2D playerHit = Physics2D.Raycast(
             transform.position, transform.right, visionRange, playerLayer
             );
@@ -119,21 +104,42 @@ public class GroundPatrolEnemy : MonoBehaviour
         {
             currentState = State.Patrolling;
         }
+
+        if (playerHit.distance < attackRange)
+        {
+            currentState = State.Attack;
+        }
+
+
+    }
+
+    //attack player if in attack range
+    private void HandleAttack()
+    {
+        RaycastHit2D playerHit = Physics2D.Raycast(
+            transform.position, transform.right, visionRange, playerLayer
+            );
+        animator.SetBool("Running", false);
+        animator.SetBool("Walking", false);
+        if (playerHit == false || playerHit.distance > visionRange)
+        {
+            currentState = State.Patrolling;
+        }
         else if (playerHit.distance > attackRange)
         {
             currentState = State.Run;
         }
-        else 
+        else
         {
-            if(Time.time > attackTimer)
+            if (Time.time > attackTimer)
             {
-                
-                if(AttackTask == null)
+
+                if (AttackTask == null)
                 {
                     attackTimer = Time.time + attackDelay;
                     AttackTask = StartCoroutine(AttackCoroutine());
                 }
-                
+
             }
 
         }
@@ -143,14 +149,12 @@ public class GroundPatrolEnemy : MonoBehaviour
     //Animate the attack first after completing animation check if player is in attackRange or not
     IEnumerator AttackCoroutine()
     {
-        for(int i = 0;i < 1; i += 1)
-        {
-            animator.SetTrigger("Attack");
-            yield return new WaitForSecondsRealtime(ATTACK_ANIMATION_LENGTH);
-        }
+
+        animator.SetTrigger("Attack");
+        yield return new WaitForSecondsRealtime(ATTACK_ANIMATION_LENGTH);
 
         RaycastHit2D playerHit = Physics2D.Raycast(
-            transform.position, transform.right, visionRange, playerLayer
+            transform.position, transform.right, attackRange, playerLayer
             );
 
         if (playerHit)
@@ -164,7 +168,7 @@ public class GroundPatrolEnemy : MonoBehaviour
             }
         }
         StopCoroutine(AttackTask);
-        AttackTask = null ;
+        AttackTask = null;
     }
     //this check if the enemy is end of the platform if yes it will change direction
     private void CheckGroundEnd()
@@ -194,36 +198,38 @@ public class GroundPatrolEnemy : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         if (groundCheck != null)
-            Gizmos.DrawLine(groundCheck.position, groundCheck.position  -groundCheck.up * checkDistance);
+            Gizmos.DrawLine(groundCheck.position, groundCheck.position - groundCheck.up * checkDistance);
         Gizmos.color = Color.yellow;
         Gizmos.DrawLine(transform.position, transform.position + transform.right * visionRange);
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, transform.position + transform.right * attackRange);
+        Gizmos.color = Color.green;
 
+        RaycastHit2D enemyHit = Physics2D.Raycast(transform.position, transform.right, 0.5f, enemyLayer);
+        if (enemyHit.collider != null)
+            Gizmos.DrawLine(transform.position, enemyHit.transform.position);
+        Gizmos.color = Color.blue;
+        RaycastHit2D wallHit = Physics2D.Raycast(transform.position, transform.right, 0.5f, groundLayer);
+        if (wallHit.collider != null)
+            Gizmos.DrawLine(transform.position, wallHit.transform.position);
     }
 
     public void GotHit()
     {
-        
-        
+
+
         RaycastHit2D playerHit = Physics2D.Raycast(
             transform.position, transform.right, visionRange, playerLayer
             );
-        if(!playerHit) animator.SetTrigger("Alert");
-        StartCoroutine( TimeScalar( effectTimer ,timeScale ));
         if (!playerHit)
         {
+            animator.SetTrigger("Alert");
+            new WaitForSecondsRealtime(0.2f);
             Flip();
         }
     }
 
-    
 
-    IEnumerator TimeScalar(float sec, float timescale)
-    {
-        Time.timeScale = timescale;
-        yield return new WaitForSecondsRealtime(sec);
-        Time.timeScale = 1f;
-    }
+
 }
 

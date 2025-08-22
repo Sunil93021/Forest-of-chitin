@@ -1,9 +1,11 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
-    [SerializeField] private int maxHealth;
+    [SerializeField] private int maxHealth = 100;
+    [SerializeField] private float deadDelay = 2f;
     private Animator animator;
 
     private void Awake()
@@ -26,9 +28,18 @@ public class PlayerHealth : MonoBehaviour
         // player dead animation
         animator.SetBool("IsDead", true);
 
+        StartCoroutine(DeadPlay());
+        GetComponent<Rigidbody2D>().gravityScale = 0;
+        GetComponent<CapsuleCollider2D>().enabled = false;
+        GetComponent<PlayerHealth>().enabled = false;
         // restart after few seconds
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);  
 
+    }
+    IEnumerator DeadPlay()
+    {
+        yield return new WaitForSecondsRealtime(deadDelay);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        
     }
 
 }
